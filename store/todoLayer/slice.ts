@@ -2,6 +2,10 @@ import type {PayloadAction} from '@reduxjs/toolkit'
 import {createSlice} from "@reduxjs/toolkit";
 import {ChangeTask, Todo, Todos} from "../../types/types";
 import {todoFilter} from "../../helpers/helpers";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import {MMKV} from "react-native-mmkv";
+
+
 
 const initialState = {
   todoList: [],
@@ -9,10 +13,38 @@ const initialState = {
   flag: 'FILTER_ALL'
 } as Todos
 
+// const getEntries = () => {
+//   try {
+//     const jsonValue = AsyncStorage.getItem('todos');
+//     console.log(jsonValue)
+//     return jsonValue != null ? JSON.parse(jsonValue) : null
+//   } catch (err) {
+//     console.log(err)
+//   }
+// }
+//
+// const initialState = () => {
+//   const localTodo =  getEntries()
+//   if (localTodo === null) {
+//     return {
+//       todoList: [],
+//       sortedList: [],
+//       flag: 'FILTER_ALL'
+//     }
+//   }
+//   return JSON.parse(localTodo);
+// }
+
 const todoSlice = createSlice({
   name: 'todoState',
   initialState,
   reducers: {
+
+    addState(state, action: PayloadAction<Todos>) {
+      console.log(action.payload)
+      // state.todoList = [action.payload.todoList]
+      // state.sortedList = todoFilter(state.flag, state.todoList)
+    },
 
     addTask(state, action: PayloadAction<Todo>) {
       state.todoList = [...state.todoList, action.payload]
@@ -68,6 +100,7 @@ const todoSlice = createSlice({
 })
 
 export const {
+  addState,
   addTask,
   filterAll,
   filterIsCompleted,

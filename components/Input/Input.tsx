@@ -1,5 +1,5 @@
 import {FC, useState} from "react";
-import {NativeSyntheticEvent, Text, TextInputChangeEventData} from "react-native";
+import {Text} from "react-native";
 import {AddButton, InputBlock, StyledInput} from "./Input.styled";
 import {useDispatch} from "react-redux";
 import {addTask} from "../../store/todoLayer/slice";
@@ -17,7 +17,7 @@ export const Input: FC = () => {
     }
   };
 
-  const handleSubmit = (e: NativeSyntheticEvent<TextInputChangeEventData>): void => {
+  const handleSubmit = (e: any): void => {
     if (e.nativeEvent.key === "Enter") {
       addTodoInList();
     }
@@ -28,7 +28,6 @@ export const Input: FC = () => {
       <StyledInput
         type="text"
         value={text}
-        multiline={true}
         onChangeText={setText}
         onKeyPress={handleSubmit}
         placeholder="Введи задачу"

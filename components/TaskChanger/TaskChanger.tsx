@@ -6,7 +6,7 @@ interface Props {
   text: string
   id: number
 
-  changeValueTodo(): any
+  changeValueTodo(id: number, value: string, text?: string): void
 
 }
 

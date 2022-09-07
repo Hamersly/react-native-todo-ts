@@ -1,7 +1,7 @@
 import {createSelector} from "@reduxjs/toolkit";
-import {Todos} from "../../types/types";
+import {RootState} from "../../types/types";
 
-const todoState = (state: any) => state;
+const todoState = (state: RootState) => state;
 
 export const flagSelector = createSelector(
   todoState,

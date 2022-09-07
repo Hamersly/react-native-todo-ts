@@ -16,7 +16,7 @@ export const Task: FC<Props> = ({task}) => {
   const {id, date, text, isCompleted, change} = task
   const dispatch = useDispatch()
 
-  const changeValueTodo = (id: number, value: string, text?: string): any => {
+  const changeValueTodo = (id: number, value: string, text?: string) => {
     dispatch(changeTask({id, value, text}))
   };
 
