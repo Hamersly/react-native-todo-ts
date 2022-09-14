@@ -1,5 +1,5 @@
 import {Todo, Todos} from "../types/types";
-import {AsyncStorage} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const fullTodoFunc = (text: string): Todo => {
   const nowDate = new Date().getDate();
@@ -31,20 +31,10 @@ export const todoFilter = (flag: string, arr: any) => {
   }
 }
 
-// export const setData = async (key: string, value: Todos) => {
-//   try {
-//     await AsyncStorage.setItem(key, value)
-//   } catch (e) {
-//     // saving error
-//   }
-// }
-//
-// export const getData = async () => {
-//   try {
-//     const value = await AsyncStorage.getItem('@storage_Key')
-//     if(value !== null) {
-//       // value previously stored
-//     }
-//   } catch(e) {
-//     // error reading value
-//   }
+export const setEntries = async (todos: Todos):Promise<void> => {
+  try {
+    await AsyncStorage.setItem("todos", JSON.stringify(todos));
+  } catch (err) {
+    console.log(err)
+  }
+};

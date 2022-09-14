@@ -1,11 +1,8 @@
 import type {PayloadAction} from '@reduxjs/toolkit'
-import {createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {ChangeTask, Todo, Todos} from "../../types/types";
 import {todoFilter} from "../../helpers/helpers";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import {MMKV} from "react-native-mmkv";
-
-
 
 const initialState = {
   todoList: [],
@@ -13,39 +10,21 @@ const initialState = {
   flag: 'FILTER_ALL'
 } as Todos
 
-// const getEntries = () => {
-//   try {
-//     const jsonValue = AsyncStorage.getItem('todos');
-//     console.log(jsonValue)
-//     return jsonValue != null ? JSON.parse(jsonValue) : null
-//   } catch (err) {
-//     console.log(err)
-//   }
-// }
-//
-// const initialState = () => {
-//   const localTodo =  getEntries()
-//   if (localTodo === null) {
-//     return {
-//       todoList: [],
-//       sortedList: [],
-//       flag: 'FILTER_ALL'
-//     }
-//   }
-//   return JSON.parse(localTodo);
-// }
+export const addState: any = createAsyncThunk(
+  'todoState/addState',
+  async () => {
+    const jsonValue: any = await AsyncStorage.getItem('todos')
+    return jsonValue != null ? JSON.parse(jsonValue) : null
+
+  }
+)
+
+const todosAdapter = createEntityAdapter();
 
 const todoSlice = createSlice({
   name: 'todoState',
-  initialState,
+  initialState: todosAdapter.getInitialState(initialState),
   reducers: {
-
-    addState(state, action: PayloadAction<Todos>) {
-      console.log(action.payload)
-      // state.todoList = [action.payload.todoList]
-      // state.sortedList = todoFilter(state.flag, state.todoList)
-    },
-
     addTask(state, action: PayloadAction<Todo>) {
       state.todoList = [...state.todoList, action.payload]
       state.sortedList = todoFilter(state.flag, state.todoList)
@@ -58,12 +37,12 @@ const todoSlice = createSlice({
 
     filterIsCompleted(state) {
       state.flag = 'FILTER_IS_COMPLETED'
-      state.sortedList = state.todoList.filter((task) => task.isCompleted)
+      state.sortedList = state.todoList.filter((task: Todo) => task.isCompleted)
     },
 
     filterIsNotCompleted(state) {
       state.flag = 'FILTER_IS_NOT_COMPLETED'
-      state.sortedList = state.todoList.filter((task) => !task.isCompleted)
+      state.sortedList = state.todoList.filter((task: Todo) => !task.isCompleted)
     },
 
     removeAllTasks(state) {
@@ -72,12 +51,12 @@ const todoSlice = createSlice({
     },
 
     removeTask(state, action: PayloadAction<number>) {
-      state.todoList = state.todoList.filter((task) => task.id !== action.payload)
+      state.todoList = state.todoList.filter((task: Todo) => task.id !== action.payload)
       state.sortedList = todoFilter(state.flag, state.todoList)
     },
 
-    changeTask(state,  action: PayloadAction<ChangeTask>) {
-      const changeTaskValue = state.todoList.map((task) => {
+    changeTask(state, action: PayloadAction<ChangeTask>) {
+      const changeTaskValue = state.todoList.map((task: Todo) => {
           if (task.id === action.payload.id && action.payload.text) {
             // @ts-ignore
             return {...task, [action.payload.value]: !task[action.payload.value], text: action.payload.text}
@@ -92,15 +71,21 @@ const todoSlice = createSlice({
       return {
         ...state,
         todoList: changeTaskValue,
-        sortedList:todoFilter(state.flag, changeTaskValue)
+        sortedList: todoFilter(state.flag, changeTaskValue)
       }
-    }
+    },
+  },
 
+  extraReducers: {
+    [addState.fulfilled]: (state, action: PayloadAction<Todos>) => {
+      state.todoList = action.payload.todoList
+      state.sortedList = action.payload.sortedList
+      state.flag = action.payload.flag
+    }
   }
 })
 
 export const {
-  addState,
   addTask,
   filterAll,
   filterIsCompleted,
